@@ -1,0 +1,4 @@
+; $Id$
+name = "Hide submit button"
+description = "Hide submit button after clicked to avoid dumplicate posting"
+core = "6.x"
