@@ -1,4 +1,22 @@
 // $Id$
 
-NOTE: Please put most recent changes at the TOP of the list.
+-- 2008-12-06 version 6.x-1.2
 
+* #338896 Added hook_help with links to drupal project and documentation 
+* #338896 Added advanced help support
+* Added upload image widget to the admin settings
+* Added Use default image checkbox
+* Few improvements in the admin settings code and ui
+* Added hebrew translation
+ 
+-- 2008-11-23 version 6.x-1.1
+
+* Added missing loader.gif
+
+-- 2008-11-23 version 6.x-1.0
+
+* hide submit button after clicked
+* java code can be loaded on selected pages only (like when adding or editing nodes)
+* works also for page aliases
+* Display a message and/or an image (ajax-like animation) while waiting
+* Multi-language message support
