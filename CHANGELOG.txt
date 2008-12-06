@@ -1,5 +1,13 @@
 // $Id$
 
+-- 2008-12-06 version 6.x-1.4
+
+* Added missing file; javascript
+
+-- 2008-12-06 version 6.x-1.3
+
+* Added missing files; javascript, translation and help files
+
 -- 2008-12-06 version 6.x-1.2
 
 * #338896 Added hook_help with links to drupal project and documentation 
