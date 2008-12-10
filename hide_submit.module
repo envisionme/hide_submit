@@ -70,19 +70,22 @@ function hide_submit_menu() {
  * Implementation of hook_init
 */
 function hide_submit_init() {
+    
+    static $hide_submit_js_already_loaded = FALSE;
 
-  _hide_submit_load_js();
+    if (!$hide_submit_js_already_loaded && _hide_submit_load_js_check_condition()) {
+        drupal_add_css(drupal_get_path('module', 'hide_submit') .'/hide-submit.css', 'module', 'all', FALSE);
+        $js = _hide_submit_get_javascript();
+        drupal_add_js($js, 'inline', 'header');
+        $hide_submit_js_loaded = TRUE;  
+    }
 }
 
 /**
  * Check if JS should be loaded for current page
-*/
-function _hide_submit_load_js() {
+*/                   
+function _hide_submit_load_js_check_condition() {
 
-    static $hide_submit_js_loaded = FALSE;
-    
-    if ($hide_submit_js_loaded)
-        return TRUE;
     
     $js_load_option = variable_get('hide_submit_js_load_option', DEFAULT_JS_LOAD);
 
@@ -109,15 +112,7 @@ function _hide_submit_load_js() {
         $page_match = $page_match || preg_match($regexp, $_GET['q']);
     }
     
-    if ($page_match == 1) {
-        drupal_add_css(drupal_get_path('module', 'hide_submit') .'/hide-submit.css', 'module', 'all', FALSE);
-        $js = _hide_submit_get_javascript();
-        drupal_add_js($js, 'inline', 'header');
-        $hide_submit_js_loaded = TRUE;
-        return TRUE;
-    }
-    
-    return FALSE;
+    return ($page_match == 1);
 }
 
 /**
