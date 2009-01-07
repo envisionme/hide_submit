@@ -17,7 +17,7 @@ define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT', 0);
 define('HIDE_SUBMIT_IN_ALL_PAGES',        1);
 define('HIDE_SUBMIT_IN_SELECTED_PAGES',   2);
 
-define('DEFAULT_JS_LOAD', HIDE_SUBMIT_ON_CONTENT_ADD_EDIT);
+define('DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
 
 define('HIDE_SUBMIT_DEFAULT_IMAGE', drupal_get_path('module', 'hide_submit') .'/loader.gif');
 define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
