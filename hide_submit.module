@@ -74,7 +74,6 @@ function hide_submit_init() {
     static $hide_submit_js_already_loaded = FALSE;
 
     if (!$hide_submit_js_already_loaded && _hide_submit_load_js_check_condition()) {
-        drupal_add_css(drupal_get_path('module', 'hide_submit') .'/hide-submit.css', 'module', 'all', FALSE);
         $js = _hide_submit_get_javascript();
         drupal_add_js($js, 'inline', 'footer');
         $hide_submit_js_loaded = TRUE;  
