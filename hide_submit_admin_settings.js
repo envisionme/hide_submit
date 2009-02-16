@@ -1,21 +1,15 @@
-function hs_toggle( use_default ) {
-    img="#edit-hide-submit-image-link-wrapper";
-    dfl="#hide-submit-preview-default-wrapper";
-    user="#hide-submit-preview-user-wrapper";
-    
-    if ( use_default ) { 
-        $(img).hide(); 
-        $(user).hide();
-        $(dfl).show();
+// $id$
+function hs_toggle( use_custom_link ) {
+    img="#edit-hide-submit-custom-image-link-wrapper";
+    if ( use_custom_link ) { 
+        $(img).show(); 
     }
     else {
-        $(img).show(); 
-        $(user).show();
-        $(dfl).hide();
+        $(img).hide(); 
     }
 }
 $(document).ready(function() {
-    $("#edit-hide-submit-toggle-image").each(function() {
+    $("#edit-hide-submit-toggle-custom-image").each(function() {
         hs_toggle ($(this).attr("checked"));
         $(this).change(function() {
             hs_toggle ( $(this).attr("checked") );

@@ -15,11 +15,14 @@
 
 define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT', 0);
 define('HIDE_SUBMIT_IN_ALL_PAGES',        1);
-define('HIDE_SUBMIT_IN_SELECTED_PAGES',   2);
+define('HIDE_SUBMIT_IN_LISTED_PAGES',     2);
+define('HIDE_SUBMIT_EXCLUDE_LISTED_PAGES', 3);
 
 define('DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
 
 define('HIDE_SUBMIT_DEFAULT_IMAGE', drupal_get_path('module', 'hide_submit') .'/loader.gif');
+
+define('HIDE_SUBMIT_MODULE_DIRECTORY', drupal_get_path('module', 'hide_submit').'/images' );
 define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
 
 define('HIDE_SUBMIT_IMG_FORCE_DEFAULT', 1);
@@ -61,8 +64,37 @@ function hide_submit_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hide_submit_admin_settings'),
     'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
+    'file' => 'hide_submit_admin.inc',
   );                                   
+
+  $items['admin/settings/hide-submit/settings'] = array(
+    'title' => 'Hide Submit',
+    'file' => 'hide_submit_admin.inc',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 10,
+  );                                   
+  
+  $items['admin/settings/hide-submit/settings-expert'] = array(
+    'title' => 'Expert mode',
+    'description' => 'Manage hide submit images',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hide_submit_admin_settings_expert'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'hide_submit_admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 20,
+  ); 
+  
+  $items['admin/settings/hide-submit/delete/%'] = array(
+    'title' => 'Confirm delete',
+    'description' => 'Delete an image file',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hide_submit_admin_delete_image',4),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'hide_submit_admin.inc',
+    'type' => MENU_CALLBACK,
+  ); 
+  
   return $items;
 }
 
@@ -91,7 +123,8 @@ function _hide_submit_load_js_check_condition() {
     switch ($js_load_option) {
         case HIDE_SUBMIT_IN_ALL_PAGES:
             return TRUE;
-        case HIDE_SUBMIT_IN_SELECTED_PAGES:
+        case HIDE_SUBMIT_IN_LISTED_PAGES:
+        case HIDE_SUBMIT_EXCLUDE_LISTED_PAGES:
             $pages = variable_get('hide_submit_js_load_pages', '');
             break;
         case HIDE_SUBMIT_IN_CONTENT_ADD_EDIT:
@@ -100,7 +133,9 @@ function _hide_submit_load_js_check_condition() {
             break;
     }
     
-    $pages .= "\r\nadmin/settings/hide-submit";
+    if ($js_load_option != HIDE_SUBMIT_EXCLUDE_LISTED_PAGES) {
+        $pages .= "\r\nadmin/settings/hide-submit";
+    }
     
     $path = drupal_get_path_alias($_GET['q']);
     $regexp = '/^('. preg_replace(array('/(\r\n?|\n)/', '/\\\\\*/', '/(^|\|)\\\\<front\\\\>($|\|)/'), array('|', '.*', '\1'. preg_quote(variable_get('site_frontpage', 'node'), '/') .'\2'), preg_quote($pages, '/')) .')$/';
@@ -111,144 +146,28 @@ function _hide_submit_load_js_check_condition() {
         $page_match = $page_match || preg_match($regexp, $_GET['q']);
     }
     
+    // Do we have a match on our page list? 
+    if ($js_load_option == HIDE_SUBMIT_EXCLUDE_LISTED_PAGES) {
+        return !($page_match == 1);
+    }
+    
     return ($page_match == 1);
 }
 
 /**
- * Implementation of admin_settings callback
-*/
-
-function hide_submit_admin_settings(&$form_state, $key = '') {
-    
-  drupal_add_js(HIDE_SUBMIT_ADMIN_SETTINGS_JS);
-  
-  $directory = HIDE_SUBMIT_IMG_DIRECTORY;
-    
-  // Check for a new uploaded image, and use that instead.
-  if ($file = file_save_upload('hide_submit_image_upload', array('file_validate_is_image' => array()))) {
-     if (file_check_directory( $directory, FILE_CREATE_DIRECTORY, 'hide_submit_image_upload')) {
-        if (file_copy($file, $directory, FILE_EXISTS_RENAME)) {
-           $_POST['hide_submit_image_link'] = $file->filepath;
-           $_POST['hide_submit_toggle_image'] = 0;
-        }
-     }
-  }
-    
-  // Create the form
-  $form = array();
-
-  $form['fieldset_message'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Display options'),
-    '#collapsible' => TRUE,
-    '#description' => t("The message to print after submit is clicked and the button become invisible. i.e. Please wait.."),
-  );
-
-  $form['fieldset_message']['hide_submit_message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Default Message'),
-    '#rows' => 2,
-    '#default_value' => variable_get('hide_submit_message', HIDE_SUBMIT_DEFAULT_MESSAGE ),
-  );
-  
-  $form['fieldset_message']["hide_submit_toggle_image"] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use the default image'),
-      '#default_value' => variable_get('hide_submit_toggle_image', 1 ),
-      '#tree' => FALSE,
-      '#description' => t('Check here if you want to use the gif animation supplied with the module.')
+ * Implementation of hook_theme()
+ */
+ function hide_submit_theme()
+{
+    $theme = array(
+        'hide_submit_images_fieldset' => array(
+            'arguments' => array('form' => NULL),
+            //'file' => 'gametracker_pages_games.inc',
+        ),
     );
-  
-
-  $form['fieldset_message']['hide_submit_image_link'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Image or animation'),
-    '#default_value' => variable_get('hide_submit_image_link', HIDE_SUBMIT_DEFAULT_IMAGE ),
-    '#description' => t("A link to an image, this image will be added to message.."),
-  );
-
-  // Upload picture
-  $form['#attributes']['enctype'] = 'multipart/form-data';
-
-  //$picture = variable_get('hide_submit_image_link', HIDE_SUBMIT_DEFAULT_IMAGE ); 
-
-  $form['fieldset_message']['hide_submit_image_upload'] = array(
-    '#type' => 'file', 
-    '#title' => t('Upload picture'), 
-    '#size' => 48, 
-    '#description' => t('Upload image or gif animation to display with the message.'),
-  );
-
-  $form['fieldset_message']['fieldset_locale'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Localization'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $languages = language_list('language', TRUE);
-  foreach ($languages as $langcode => $language) {
-    if ($language->enabled) {
-      $msg_for_language = "hide_submit_message_$langcode";
-      $form['fieldset_message']['fieldset_locale'][$msg_for_language] = array(
-        '#type' => 'textarea',
-        '#rows' => 2,
-        '#title' => check_plain($language->native),
-        '#default_value' => variable_get($msg_for_language, ""),
-      );
-    }
-  }
-
-  $form['fieldset_preview_default'] = array(
-    '#prefix' => "<DIV id = 'hide-submit-preview-default-wrapper'>",
-    '#suffix' => "</DIV>",
-    '#type' => 'fieldset',
-    '#title' => t('Preview default animation and message'),
-    '#collapsible' => FALSE,
-  );
-
-  $form['fieldset_preview_default']['preview'] = array(
-    '#type' => 'markup',
-    '#id' => 'hide-submit-preview-user',
-    '#value' => filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message( HIDE_SUBMIT_IMG_FORCE_DEFAULT ) ) ),
-  );
-
-  $form['fieldset_preview_user'] = array(
-    '#prefix' => "<DIV id = 'hide-submit-preview-user-wrapper'>",
-    '#suffix' => "</DIV>",
-    '#type' => 'fieldset',
-    '#title' => t('Preview user defined image and message'),
-    '#collapsible' => FALSE,
-  );
-
-  $form['fieldset_preview_user']['preview'] = array(
-    '#type' => 'markup',
-    '#value' => filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message( HIDE_SUBMIT_IMG_FORCE_USER ) ) ),
-  );
-
-  $form['fieldset_js_settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Load options'),
-      '#collapsible' => TRUE,
-  );
-
-  $form['fieldset_js_settings']['hide_submit_js_load_option'] = array(
-      '#type' => 'radios',
-      '#title' => t('Javascript load options'),
-      '#default_value' => variable_get('hide_submit_js_load_option', DEFAULT_JS_LOAD),
-      '#options' => array(0 => t('Add/Edit node pages only'), 1 => t('Every page'), 2 => t('Page list')),
-      '#description' => t("Add/Edit node view will load for pages with url '/node/add'.  Every page, is well, EVERY PAGE.  Page list will use the list below."),
-  );
-  
-  $form['fieldset_js_settings']['hide_submit_js_load_pages'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Page list'),
-      '#default_value' => variable_get('hide_submit_js_load_pages', ''),
-      '#description' => t("Enter one page per line as Drupal paths. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", array('%blog' => 'blog', '%blog-wildcard' => 'blog/*', '%front' => '<front>')),
-  );
-
-  return system_settings_form($form);
+    return $theme;
 }
+
 
 
 /**
@@ -271,22 +190,21 @@ function _hide_submit_clean_for_javascript($format_string='') {
 *    HIDE_SUBMIT_IMG_FORCE_DEFAULT always return the default image 
 *    HIDE_SUBMIT_IMG_FORCE_USER always return the image defined by user
 */
-function _hide_submit_get_image( $options = FALSE ) {
-    switch ($options) {
-        case HIDE_SUBMIT_IMG_FORCE_DEFAULT: return HIDE_SUBMIT_DEFAULT_IMAGE;
-        case HIDE_SUBMIT_IMG_FORCE_USER:    return variable_get('hide_submit_image_link', '');  // empty if none
-        default:
-            return $force_default || variable_get('hide_submit_toggle_image', 1)
-                ? HIDE_SUBMIT_DEFAULT_IMAGE
-                : variable_get('hide_submit_image_link', HIDE_SUBMIT_DEFAULT_IMAGE );
+function _hide_submit_get_image( ) {
+    $image = variable_get('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
+    
+    if (is_array($image)) {
+        $image = $image[rand()%count($image)];
     }
+    
+    return $image;
 }
 
 /**
 * Get javascript code for injection
 */
 
-function _hide_submit_get_message( $options = FALSE ) {
+function _hide_submit_get_message( ) {
 
   global $language;
   
@@ -295,10 +213,10 @@ function _hide_submit_get_message( $options = FALSE ) {
        $message = variable_get('hide_submit_message', HIDE_SUBMIT_DEFAULT_MESSAGE);
   }
   
-  $image =  _hide_submit_get_image( $options );
+  $image =  _hide_submit_get_image( );
   
   if ($image != "")
-      $image = theme_image($image) .'&nbsp;';
+      $image = theme('image', $image, $alt = '', $title = '', $attributes = NULL, $getsize = FALSE) .'&nbsp;';
   
   return  "<p class='hide_submit'> $image $message </p>";
 }
@@ -311,10 +229,9 @@ function _hide_submit_get_javascript() {
     
     $message = filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message() ) );
     $image = check_plain( _hide_submit_get_image() ); 
-  
-  
+
   $javascript = <<<JAVASCRIPT_CODE
-jQuery("<img>").attr("src",'/$image');
+jQuery("<img>").attr("src",'$image');
 $(document).ready(function() {
   $('input:submit').click(function() {
       $(this).siblings('input:submit').hide();            
@@ -326,3 +243,4 @@ JAVASCRIPT_CODE;
 
   return $javascript;
 }
+
