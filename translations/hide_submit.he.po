@@ -133,6 +133,6 @@ msgid "Hide submit button"
 msgstr ""
 
 #: hide_submit.info:0
-msgid "Hide submit button after clicked to avoid dumplicate posting"
+msgid "Hide submit button after clicked to avoid duplicate posting"
 msgstr ""
 

@@ -188,7 +188,7 @@ function hide_submit_admin_settings(&$form_state) {
 
   $form['fieldset_images']['hide_submit_default_image'] = array(
       '#type' => 'radios',
-      '#default_value' => variable_get('hide_submit_default_image', 0 ),
+      '#default_value' => variable_get('hide_submit_default_image', md5(basename(HIDE_SUBMIT_DEFAULT_IMAGE)) ),
       '#options' => $options,
   );
   
@@ -264,7 +264,11 @@ function hide_submit_admin_settings_validate($form, &$form_state)
 function hide_submit_admin_settings_submit($form, &$form_state)
 {
     $values = (object) $form_state['values'];
-    
+    $op = isset($values->op) ? $values->op : '';
+
+    if ($op == t('Reset to defaults')) {
+      variable_del('hide_submit_image');
+    }
     // Set custom link
     if ($values->hide_submit_toggle_custom_image) {
         variable_set('hide_submit_image',$values->hide_submit_custom_image_link);
@@ -286,9 +290,6 @@ function hide_submit_admin_settings_submit($form, &$form_state)
         variable_set('hide_submit_image',$values->list_of_images[$values->hide_submit_default_image]);
         drupal_set_message("Default image is set...");    
     }
-    
-    $test = variable_get('hide_submit_image','NONE');
-    drupal_set_message("hide_submit_admin_settings_submit() ".$test);
 }
 
 
