@@ -26,8 +26,40 @@ function hide_submit_admin_delete_image_submit($form, &$form_state)
     if (file_exists(HIDE_SUBMIT_IMG_DIRECTORY) && 
         $filepath &&
         file_check_location($filepath, HIDE_SUBMIT_IMG_DIRECTORY) &&
-        file_delete($filepath) ) {
-          drupal_set_message( t('%name deleted succesfully.', array('%name' => check_plain($filename))) );
+        file_delete($filepath) ) 
+    {
+       drupal_set_message( t('%name deleted succesfully.', array('%name' => check_plain($filename))) );
+       $image = variable_get('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
+    
+       // After deleting we need to check if the deleted image was selected
+       // or was it in the random list..
+       if (is_array($image)) {
+           $key = array_search($filepath,$image);
+           if ($key !== FALSE) {
+               // Remove from random list
+               unset($image[$key]);
+               
+               if (count($image) >= 2) {
+                   variable_set('hide_submit_image',$image);
+                   drupal_set_message( t('Image removed from random list') );
+               } else {
+                   $image = array_shift($image);
+                   variable_set('hide_submit_image', $image);
+                   variable_set('hide_submit_toggle_random', 0 ); 
+                   variable_set('hide_submit_default_image', md5(basename($image)));
+                   drupal_set_message( t('Random feature disabled because only one image was selected') );
+               }
+           }
+       }
+       else if ($image == $filepath) {
+           variable_set('hide_submit_image',HIDE_SUBMIT_DEFAULT_IMAGE);
+       }
+       
+       if (variable_get('hide_submit_default_image', FALSE) == md5($filename) ) {
+          variable_set('hide_submit_default_image', md5(HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME));
+          drupal_set_message( t('Image was selected as default, reverting to module\'s default image') );
+       }
+       
    } else {
        drupal_set_message( t('Cannot delete %name, something went wrong.', array('%name' => check_plain($filename))) );
    }
@@ -79,7 +111,7 @@ function hide_submit_admin_settings(&$form_state) {
   $form['fieldset_js_settings']['hide_submit_js_load_option'] = array(
       '#type' => 'radios',
       '#title' => t('Javascript load options'),
-      '#default_value' => variable_get('hide_submit_js_load_option', DEFAULT_JS_LOAD),
+      '#default_value' => variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD),
       '#options' => array(
             0 => t('Add/Edit node pages only'), 
             1 => t('Every page'), 
@@ -144,7 +176,7 @@ function hide_submit_admin_settings(&$form_state) {
 
   // jpg, jpeg, gif, png
   $mask = "^.+\.(([jJ][pP][gG)|([jJ][pP][eE][gG])|([gG][iI][fF])|([pP][nN][gG]))$";
-  $default_images = file_scan_directory(HIDE_SUBMIT_MODULE_DIRECTORY, $mask);
+  $default_images = file_scan_directory(HIDE_SUBMIT_MODULE_DIRECTORY.'/images', $mask);
   $user_images = file_scan_directory(HIDE_SUBMIT_IMG_DIRECTORY, $mask);
 
   $options = array();
@@ -235,14 +267,6 @@ function hide_submit_admin_settings(&$form_state) {
   return $form;
 }
   
-/**
- * Implementation of admin_settings callback (expert mode)
-*/
-
-function hide_submit_admin_settings_expert(&$form_state, $key = '')
-{
-    return array( array('#value' => '<div class="messages">Coming soon...</div>') );   
-}
 
 function hide_submit_admin_settings_validate($form, &$form_state)
 {
@@ -292,7 +316,6 @@ function hide_submit_admin_settings_submit($form, &$form_state)
     }
 }
 
-
 //------------------------------------------------------------------------
 //                          THEME FUNCTIONS
 //------------------------------------------------------------------------
@@ -319,7 +342,6 @@ function theme_hide_submit_images_fieldset($form)
     t('Image'), 
     t('Random'), 
     t('Default'), 
-//    t('Override message'), 
     t('Operations')
   );
   

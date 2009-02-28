@@ -13,22 +13,25 @@
 
  define('HIDE_SUBMIT_DEFAULT_MESSAGE', t("Please wait...") );
 
+// --- Constants ---
+
 define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT', 0);
 define('HIDE_SUBMIT_IN_ALL_PAGES',        1);
 define('HIDE_SUBMIT_IN_LISTED_PAGES',     2);
 define('HIDE_SUBMIT_EXCLUDE_LISTED_PAGES', 3);
 
-define('DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
-
-define('HIDE_SUBMIT_DEFAULT_IMAGE', drupal_get_path('module', 'hide_submit') .'/loader.gif');
-
-define('HIDE_SUBMIT_MODULE_DIRECTORY', drupal_get_path('module', 'hide_submit').'/images' );
-define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
-
-define('HIDE_SUBMIT_IMG_FORCE_DEFAULT', 1);
-define('HIDE_SUBMIT_IMG_FORCE_USER', 2);
+define('HIDE_SUBMIT_DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
+define('HIDE_SUBMIT_DEFAULT_MESSAGE', t("Please wait...") );
 
 define('HIDE_SUBMIT_ADMIN_SETTINGS_JS', drupal_get_path('module', 'hide_submit') .'/hide_submit_admin_settings.js');
+define('HIDE_SUBMIT_MODULE_DIRECTORY', drupal_get_path('module', 'hide_submit') );
+define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
+
+define('HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME', 'loader.gif');
+define('HIDE_SUBMIT_DEFAULT_IMAGE', HIDE_SUBMIT_MODULE_DIRECTORY.'/images/'. HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME);
+
+
+
                                                                                                                                                                                                                 
 /**
  * Implementation of hook_help().
@@ -74,17 +77,6 @@ function hide_submit_menu() {
     'weight' => 10,
   );                                   
   
-  $items['admin/settings/hide-submit/settings-expert'] = array(
-    'title' => 'Expert mode',
-    'description' => 'Manage hide submit images',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('hide_submit_admin_settings_expert'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'hide_submit_admin.inc',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 20,
-  ); 
-  
   $items['admin/settings/hide-submit/delete/%'] = array(
     'title' => 'Confirm delete',
     'description' => 'Delete an image file',
@@ -118,7 +110,7 @@ function hide_submit_init() {
 function _hide_submit_load_js_check_condition() {
 
     
-    $js_load_option = variable_get('hide_submit_js_load_option', DEFAULT_JS_LOAD);
+    $js_load_option = variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD);
 
     switch ($js_load_option) {
         case HIDE_SUBMIT_IN_ALL_PAGES:
@@ -185,15 +177,20 @@ function _hide_submit_clean_for_javascript($format_string='') {
 
 
 /**
-* get the image according to user selection and the "use default" checkbox
-* @param $options
-*    HIDE_SUBMIT_IMG_FORCE_DEFAULT always return the default image 
-*    HIDE_SUBMIT_IMG_FORCE_USER always return the image defined by user
+* get the image according to user selection, default, random etc...
 */
-function _hide_submit_get_image( ) {
+function _hide_submit_get_image() {
+    // Use static to assure the same image is returned for the current page
+    static $image = FALSE;
+    
+    if ($image !== FALSE)
+        return $image;
+    
     $image = variable_get('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
     
     if (is_array($image)) {
+        list($usec, $sec) = explode(' ', microtime());
+        srand((float) $sec + ((float) $usec * 100000));
         $image = $image[rand()%count($image)];
     }
     
@@ -218,7 +215,7 @@ function _hide_submit_get_message( ) {
   if ($image != "")
       $image = theme('image', $image, $alt = '', $title = '', $attributes = NULL, $getsize = FALSE) .'&nbsp;';
   
-  return  "<p class='hide_submit'> $image $message </p>";
+  return  '<p class="hide_submit">'.$image.' '.$message.' </p>';
 }
 
 /**
@@ -229,14 +226,14 @@ function _hide_submit_get_javascript() {
     
     $message = filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message() ) );
     $image = check_plain( _hide_submit_get_image() ); 
-
+    
   $javascript = <<<JAVASCRIPT_CODE
-jQuery("<img>").attr("src",'$image');
+jQuery("<img>").attr("src",'/$image');
 $(document).ready(function() {
   $('input:submit').click(function() {
       $(this).siblings('input:submit').hide();            
       $(this).hide();      
-      $('$message').insertAfter(this).slideDown('fast');                 
+      $('$message').insertAfter(this);
   })  
 })
 JAVASCRIPT_CODE;

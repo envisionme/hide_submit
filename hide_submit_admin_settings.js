@@ -11,7 +11,7 @@ function hs_toggle( use_custom_link ) {
 $(document).ready(function() {
     $("#edit-hide-submit-toggle-custom-image").each(function() {
         hs_toggle ($(this).attr("checked"));
-        $(this).change(function() {
+        $(this).click(function() {
             hs_toggle ( $(this).attr("checked") );
         });
     });
