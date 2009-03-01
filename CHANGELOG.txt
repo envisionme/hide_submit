@@ -1,6 +1,13 @@
 // $Id$
 
+-- 2009-03-01 version 6.x-1.6
+
+*  New: Admin settings widget to select, upload and manage images
+*  New: Option to randomize images
+*  New: #374692: Visibility option, load script on all pages except..
+*  New: #338896: Added several out-of-the-box animations
 *  Change: Script moved to footer.
+*  Fixed: #375410: Typo in module's description
 *  Fixed: #358120: Non-existent CSS being included
 *  Fixed: Define typo, default setting for script load pages
 
