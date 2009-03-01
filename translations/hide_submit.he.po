@@ -19,120 +19,195 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: hide_submit.module:14
-msgid "Please wait..."
-msgstr "נא להמתין..."
+#: hide_submit_admin.inc:15
+msgid "Are you sure you want to delete the image file %name"
+msgstr "האם אתה בטוח שאתה רוצה למחק את קובץ התמונה %name"
 
-#: hide_submit.module:39
-msgid "The hide_submit module provides a way to hide the submit button in a form after it has been clicked. This will indicate to the user that his or her request is being processed and helps to prevent duplicate postings from impatient \"double clickers\"."
-msgstr "רכיב hide submit מסתיר את כפתור השמירה לאחר שהמשתמש לחץ עליו ובמקומו מציג הודעה בתוספת של אנימציה. זאת בכדי להציג למשתמש שבקשתו מתבצעת ובכדי למנוע לחיצה נוספת על הכפתור שעלולה לגרום להודעה להופיע באתר יותר מפעם אחת"
+#: hide_submit_admin.inc:31
+msgid "%name deleted succesfully."
+msgstr "הקובץ %name נמחק בהצלחה"
 
-#: hide_submit.module:40
-msgid "For more information please visit the !project page or the !documentation page"
-msgstr "למידע נוסף בקר בדף הפרוייקט !project או בדפי העזרה !documentation"
+#: hide_submit_admin.inc:44
+msgid "Image removed from random list"
+msgstr "התמונה הוסרה מרשימת התמונות האקראיות"
 
-#: hide_submit.module:44
-msgid "Click the icon to read the extended help."
-msgstr "לחצו על האיקון להצגת עזרה מורחבת"
+#: hide_submit_admin.inc:50
+msgid "Random feature disabled because only one image was selected"
+msgstr "תכונת הסדר האקראי בוטלה מכיוון שרק תמונה אחת נשארה ברשימה"
 
-#: hide_submit.module:149
-msgid "Display options"
-msgstr "אפשרויות תצוגה"
+#: hide_submit_admin.inc:60
+msgid "Image was selected as default, reverting to module's default image"
+msgstr "התמונה ברירת המחדל נמחקה, משחזר ברירת מחדל של המודול"
 
-#: hide_submit.module:151
-msgid "The message to print after submit is clicked and the button become invisible. i.e. Please wait.."
-msgstr "ההודעה שתודפס למשתמש לאחר שלחץ על כפתור השמירה. למשל.. נא להמתין.."
+#: hide_submit_admin.inc:64
+msgid "Cannot delete %name, something went wrong."
+msgstr "מחיקת התמונה %name נכשלה, משהו לא הלך קשורה."
 
-#: hide_submit.module:156
-msgid "Default Message"
-msgstr "הודעה ברירת מחדל"
+#: hide_submit_admin.inc:93
+msgid "Preview of current animation and message settings"
+msgstr "חלונית תצוגה לאנימציה וההודעה המוגדרים"
 
-#: hide_submit.module:163
-msgid "Use the default image"
-msgstr "השתמש באנימציה ברירת מחדל"
-
-#: hide_submit.module:166
-msgid "Check here if you want to use the gif animation supplied with the module."
-msgstr "בחר אופציה זו אם ברצונך להשתמש באנימציה ברירת המחדל שסופקה עם רכיב זה"
-
-#: hide_submit.module:172
-msgid "Image or animation"
-msgstr "תמונה או אנימציה"
-
-#: hide_submit.module:174
-msgid "A link to an image, this image will be added to message.."
-msgstr "כתובת קישור לתמונה שתופיע ביחד עם ההודעה"
-
-#: hide_submit.module:184
-msgid "Upload picture"
-msgstr "טען תמונה"
-
-#: hide_submit.module:186
-msgid "Upload image or gif animation to display with the message."
-msgstr "העלה תמונה או אנימציה שתוצג ביחד עם ההודעה"
-
-#: hide_submit.module:191
-msgid "Localization"
-msgstr "לוקליזציה"
-
-#: hide_submit.module:213
-msgid "Preview default animation and message"
-msgstr "תצוגה מקדימה - אנימציה ברירת מחדל"
-
-#: hide_submit.module:227
-msgid "Preview user defined image and message"
-msgstr "תצוגה מקדימה - תמונה בהתאמה אישית"
-
-#: hide_submit.module:238
+#: hide_submit_admin.inc:107
 msgid "Load options"
 msgstr "אפשרויות טעינה"
 
-#: hide_submit.module:244
+#: hide_submit_admin.inc:113
 msgid "Javascript load options"
 msgstr "אפשרויות טעינת הסקריפט"
 
-#: hide_submit.module:246
+#: hide_submit_admin.inc:116
 msgid "Add/Edit node pages only"
-msgstr "בעת הוספה או עריכה של nodes"
+msgstr "הפעל בעת הוספה או עריכה של nodes"
 
-#: hide_submit.module:246
+#: hide_submit_admin.inc:117
 msgid "Every page"
 msgstr "בכל העמודים"
 
-#: hide_submit.module:246;252
+#: hide_submit_admin.inc:118
+msgid "Only on the listed pages."
+msgstr "הפעל רק בעמודים הרשומים"
+
+#: hide_submit_admin.inc:119
+msgid "Every page except the listed pages."
+msgstr "הפעל בכל העמודים למעט בעמודים הרשומים"
+
+#: hide_submit_admin.inc:120
+msgid "Add/Edit node view will load for pages with url '/node/add' and '/node/*/edit'.  Every page, is well, EVERY PAGE.  For the last two options use the page list box to set a list of include/exclude urls."
+msgstr "בחר את האופציה הרצוייה לטעינת הסקיפט. בעמודי עריכה של nodes, בכל העמודים או ע\"פ הרשימה."
+
+#: hide_submit_admin.inc:125
 msgid "Page list"
 msgstr "על פי רשימת עמודים"
 
-#: hide_submit.module:247
-msgid "Add/Edit node view will load for pages with url '/node/add'.  Every page, is well, EVERY PAGE.  Page list will use the list below."
-msgstr "בחר באילו עמודים ברצונך לטעון את הסקריפט"
-
-#: hide_submit.module:254
+#: hide_submit_admin.inc:127
 msgid "Enter one page per line as Drupal paths. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page."
-msgstr ""
-"יש להכניס מיקום אחד לשורה. יש להשתמש "
-"במיקומי דרופל. ניתן להשתמש ב'*'. דוגמה "
-"למיקומים: '<em>%blog</em>' עבור עמוד הבלוגים "
-"ו-'<em>%blog-wildcard</em>'  עבור כל בלוג. "
-"'<em>%front</em>' הוא העמוד הראשי."
+msgstr "יש להכניס מיקום אחד לשורה. יש להשתמש במיקומי דרופל. ניתן להשתמש ב'*'. דוגמה למיקומים: '<em>%blog</em>' עבור עמוד הבלוגים ו-'<em>%blog-wildcard</em>'  עבור כל בלוג. '<em>%front</em>' הוא העמוד הראשי."
 
-#: hide_submit.module:59
+#: hide_submit_admin.inc:134
+msgid "Message"
+msgstr "הודעה"
+
+#: hide_submit_admin.inc:136
+msgid "The message to print after submit is clicked and the button become invisible. i.e. Please wait.."
+msgstr "ההודעה שתודפס למשתמש לאחר שלחץ על כפתור השמירה. למשל.. נא להמתין.."
+
+#: hide_submit_admin.inc:141
+msgid "Default Message"
+msgstr "הודעה ברירת מחדל"
+
+#: hide_submit_admin.inc:149
+msgid "Localization"
+msgstr "לוקליזציה"
+
+#: hide_submit_admin.inc:171
+msgid "Image or animation"
+msgstr "תמונה או אנימציה"
+
+#: hide_submit_admin.inc:211
+msgid "delete"
+msgstr "מחק"
+
+#: hide_submit_admin.inc:229
+msgid "Use custom link"
+msgstr "השתמש בקישור מותאם אישית"
+
+#: hide_submit_admin.inc:232
+msgid "Check here if you want use a custom image link."
+msgstr "סמן תיבה זאת אם ברצונך להשתמש בקישור מותאם אישי ולא בתמונה מהרשימה."
+
+#: hide_submit_admin.inc:237
+msgid "Custom image or animation"
+msgstr "תמונה או אנימציה בהתאמה אישית"
+
+#: hide_submit_admin.inc:239
+msgid "A link to an image, this image will be added to message.."
+msgstr "כתובת קישור לתמונה שתופיע ביחד עם ההודעה"
+
+#: hide_submit_admin.inc:249
+msgid "Upload picture"
+msgstr "טען תמונה"
+
+#: hide_submit_admin.inc:251
+msgid "Upload image or gif animation to display with the message."
+msgstr "העלה תמונה או אנימציה שתוצג ביחד עם ההודעה"
+
+#: hide_submit_admin.inc:256
+msgid "Randomize images"
+msgstr "הצג תמונות בסדר אקראי"
+
+#: hide_submit_admin.inc:259
+msgid "Check here if you want use random image each time the script loads. You need to check the <em>random</em> box for at least two images"
+msgstr "סמן את התיבה אם אתה רוצה שבכל טעינה תופיע תמונה אקראית. להפעלת התכונה יש לבחור בנוסף לפחות שתי תמונות מרשימת התמונות."
+
+#: hide_submit_admin.inc:293
+msgid "Reset to defaults"
+msgstr "חזור להגדרות ברירת המחדל"
+
+#: hide_submit_admin.inc:342
+msgid "Image"
+msgstr "תמונה"
+
+#: hide_submit_admin.inc:343
+msgid "Random"
+msgstr "אקראי"
+
+#: hide_submit_admin.inc:344
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: hide_submit_admin.inc:345
+msgid "Operations"
+msgstr "פעולות אפשריות"
+
+#: hide_submit.module:14;24
+msgid "Please wait..."
+msgstr "נא להמתין..."
+
+#: hide_submit.module:45
+msgid "The hide_submit module provides a way to hide the submit button in a form after it has been clicked. This will indicate to the user that his or her request is being processed and helps to prevent duplicate postings from impatient \"double clickers\"."
+msgstr "רכיב hide submit מסתיר את כפתור השמירה לאחר שהמשתמש לחץ עליו ובמקומו מציג הודעה בתוספת של אנימציה. זאת בכדי להציג למשתמש שבקשתו מתבצעת ובכדי למנוע לחיצה נוספת על הכפתור שעלולה לגרום להודעה להופיע באתר יותר מפעם אחת"
+
+#: hide_submit.module:46
+msgid "For more information please visit the !project page or the !documentation page"
+msgstr "למידע נוסף בקר בדף הפרוייקט !project או בדפי העזרה !documentation"
+
+#: hide_submit.module:50
+msgid "Click the icon to read the extended help."
+msgstr "לחצו על האיקון להצגת עזרה מורחבת"
+
+#: hide_submit.module:65;74
 msgid "Hide Submit"
 msgstr ""
 
-#: hide_submit.module:60
+#: hide_submit.module:66
 msgid "Configure hide submit"
 msgstr "הגדרות hide submit"
+
+#: hide_submit.module:81
+msgid "Confirm delete"
+msgstr "אישור מחיקה"
+
+#: hide_submit.module:82
+msgid "Delete an image file"
+msgstr "מחק קובץ תמונה"
 
 #: hide_submit.module:0
 msgid "hide_submit"
 msgstr ""
 
+#: hide_submit.install:8
+msgid "Hide submit module installed."
+msgstr "המודול hide-submit הותקן באתר"
+
+#: hide_submit.install:17
+msgid "Hide submit module variables deleted.<br />To completely remove this module, delete the hide_submit directory from your files directory."
+msgstr "משתני המערכת של המודול נמחקו<br /> להסרה מלאה של המודול יש למחוק את הספרייה hide_submit מספריית הקבצים של האתר"
+
 #: hide_submit.info:0
 msgid "Hide submit button"
-msgstr ""
+msgstr "הסתר את כפתור ה-submit"
 
 #: hide_submit.info:0
 msgid "Hide submit button after clicked to avoid duplicate posting"
-msgstr ""
+msgstr "הסתר את כפתור ה-submit בכדי להמנע מפרסום הודעות כפולות"
 
