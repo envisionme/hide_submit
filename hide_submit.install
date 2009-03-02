@@ -28,4 +28,6 @@ function hide_submit_update_6100()
         variable_set('hide_submit_toggle_custom_image' , TRUE );
         variable_set('hide_submit_image', variable_get('hide_submit_image_link',HIDE_SUBMIT_DEFAULT_IMAGE) );
     }
+
+    return array();   
 }
