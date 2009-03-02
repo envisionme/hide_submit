@@ -1,5 +1,9 @@
 // $Id$
 
+-- 2009-03-02 version 6.x-1.7
+
+* Fixed: #387470: Error in hook_install
+
 -- 2009-03-01 version 6.x-1.6
 
 *  New: Admin settings widget to select, upload and manage images
