@@ -13,7 +13,7 @@ function hide_submit_install()
 */
 function hide_submit_uninstall() 
 {
-    db_query("DELETE FROM {variable} where name like 'hide_submit_%");    
+    db_query("DELETE FROM {variable} where name like 'hide_submit_%'");    
     drupal_set_message( t('Hide submit module variables deleted.<br />To completely remove this module, delete the hide_submit directory from your files directory.') );
 }
 
