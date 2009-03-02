@@ -3,7 +3,7 @@
 /**
 * Implement hook install
 */
-function hide_submit_uninstall() 
+function hide_submit_install() 
 {
     drupal_set_message( t('Hide submit module installed.') );
 }
