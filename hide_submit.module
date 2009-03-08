@@ -28,8 +28,7 @@ define('HIDE_SUBMIT_MODULE_DIRECTORY', drupal_get_path('module', 'hide_submit') 
 define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
 
 define('HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME', 'loader.gif');
-define('HIDE_SUBMIT_DEFAULT_IMAGE', HIDE_SUBMIT_MODULE_DIRECTORY.'/images/'. HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME);
-
+define('HIDE_SUBMIT_DEFAULT_IMAGE', HIDE_SUBMIT_MODULE_DIRECTORY .'/images/'. HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME);
 
 
                                                                                                                                                                                                                 
@@ -46,8 +45,8 @@ function hide_submit_help($path, $arg) {
                .'<p>'. t('For more information please visit the !project page or the !documentation page', array('!documentation' => l('documentation', 'http://drupal.org/node/338935'), '!project' => l('hide submit project', 'http://drupal.org/project/hide_submit') ) ) .'</p>';
       
       if ( module_exists('advanced_help') ) {
-          $output .= '<p>'. theme('advanced_help_topic', 'hide_submit', 'using-hide-submit').'&nbsp;' 
-                   .t('Click the icon to read the extended help.');
+          $output .= '<p>'. theme('advanced_help_topic', 'hide_submit', 'using-hide-submit') .'&nbsp;' 
+                  . t('Click the icon to read the extended help.');
       }
       
     break;
@@ -81,7 +80,7 @@ function hide_submit_menu() {
     'title' => 'Confirm delete',
     'description' => 'Delete an image file',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('hide_submit_admin_delete_image',4),
+    'page arguments' => array('hide_submit_admin_delete_image', 4),
     'access arguments' => array('administer site configuration'),
     'file' => 'hide_submit_admin.inc',
     'type' => MENU_CALLBACK,
@@ -149,8 +148,7 @@ function _hide_submit_load_js_check_condition() {
 /**
  * Implementation of hook_theme()
  */
- function hide_submit_theme()
-{
+ function hide_submit_theme() {
     $theme = array(
         'hide_submit_images_fieldset' => array(
             'arguments' => array('form' => NULL),
@@ -215,7 +213,7 @@ function _hide_submit_get_message( ) {
   if ($image != "")
       $image = theme('image', $image, $alt = '', $title = '', $attributes = NULL, $getsize = FALSE) .'&nbsp;';
   
-  return  '<p class="hide_submit">'.$image.' '.$message.' </p>';
+  return  '<p class="hide_submit">'. $image .' '. $message .' </p>';
 }
 
 /**

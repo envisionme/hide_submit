@@ -1,48 +1,68 @@
 <?php
 // $Id$
 
-function hide_submit_admin_delete_image(&$form_state, $filename)
-{
-    $filepath = HIDE_SUBMIT_IMG_DIRECTORY.'/'.$filename;
+/**
+ * @file
+ * Hide the submit button after clicked to prevent/reduce duplicate postings.
+ * 
+ * Admin pages and logic are defined in this file. 
+ */
+
+ /**
+ * Image deletion confirmation form
+ *
+ * @param &$form_state
+ * @param $filename - The file to delete
+ * @return drupal form array
+ */
+ function hide_submit_admin_delete_image(&$form_state, $filename) {
+     
+    $filepath = HIDE_SUBMIT_IMG_DIRECTORY .'/'. $filename;
     
-    if (!file_exists(HIDE_SUBMIT_IMG_DIRECTORY.'/'.$filename)) {
+    if (!file_exists(HIDE_SUBMIT_IMG_DIRECTORY .'/'. $filename)) {
        drupal_goto('admin/settings/hide-submit');
     }
 
     $form['hide_submit_image_file_path'] = array('#type' => 'value', '#value' => $filepath);
     $form['hide_submit_image_file_name'] = array('#type' => 'value', '#value' => $filename);
 
-    $msg = t('Are you sure you want to delete the image file %name', array ('%name' => check_plain($filename)));
+    $msg = t('Are you sure you want to delete the image file %name', array('%name' => check_plain($filename)));
     
     return confirm_form($form, $msg, 'admin/settings/hide-submit');
 }
 
-
-function hide_submit_admin_delete_image_submit($form, &$form_state) 
-{ 
+/**
+ * Image deletion confirmation form submit handler
+ *
+ * @param $form
+ * @param &$form_state
+ */
+function hide_submit_admin_delete_image_submit($form, &$form_state) { 
+    
     $filepath = $form_state['values']['hide_submit_image_file_path'];
     $filename = $form_state['values']['hide_submit_image_file_name'];
     
     if (file_exists(HIDE_SUBMIT_IMG_DIRECTORY) && 
         $filepath &&
         file_check_location($filepath, HIDE_SUBMIT_IMG_DIRECTORY) &&
-        file_delete($filepath) ) 
-    {
+        file_delete($filepath) )  {
+            
        drupal_set_message( t('%name deleted succesfully.', array('%name' => check_plain($filename))) );
        $image = variable_get('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
     
        // After deleting we need to check if the deleted image was selected
        // or was it in the random list..
        if (is_array($image)) {
-           $key = array_search($filepath,$image);
+           $key = array_search($filepath, $image);
            if ($key !== FALSE) {
                // Remove from random list
                unset($image[$key]);
                
                if (count($image) >= 2) {
-                   variable_set('hide_submit_image',$image);
+                   variable_set('hide_submit_image', $image);
                    drupal_set_message( t('Image removed from random list') );
-               } else {
+               } 
+               else {
                    $image = array_shift($image);
                    variable_set('hide_submit_image', $image);
                    variable_set('hide_submit_toggle_random', 0 ); 
@@ -52,7 +72,7 @@ function hide_submit_admin_delete_image_submit($form, &$form_state)
            }
        }
        else if ($image == $filepath) {
-           variable_set('hide_submit_image',HIDE_SUBMIT_DEFAULT_IMAGE);
+           variable_set('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
        }
        
        if (variable_get('hide_submit_default_image', FALSE) == md5($filename) ) {
@@ -60,10 +80,12 @@ function hide_submit_admin_delete_image_submit($form, &$form_state)
           drupal_set_message( t('Image was selected as default, reverting to module\'s default image') );
        }
        
-   } else {
+   } 
+   else {
        drupal_set_message( t('Cannot delete %name, something went wrong.', array('%name' => check_plain($filename))) );
    }
 }  
+
 /**
  * Implementation of admin_settings callback
 */
@@ -176,11 +198,11 @@ function hide_submit_admin_settings(&$form_state) {
 
   // jpg, jpeg, gif, png
   $mask = "^.+\.(([jJ][pP][gG)|([jJ][pP][eE][gG])|([gG][iI][fF])|([pP][nN][gG]))$";
-  $default_images = file_scan_directory(HIDE_SUBMIT_MODULE_DIRECTORY.'/images', $mask);
+  $default_images = file_scan_directory(HIDE_SUBMIT_MODULE_DIRECTORY .'/images', $mask);
   $user_images = file_scan_directory(HIDE_SUBMIT_IMG_DIRECTORY, $mask);
 
   $options = array();
-  foreach( array_merge($default_images, $user_images) as $image_file) {
+  foreach (array_merge($default_images, $user_images) as $image_file) {
       //$count = 1;
       $key = md5($image_file->basename);
       $options[$key] = '';
@@ -189,15 +211,8 @@ function hide_submit_admin_settings(&$form_state) {
       $form['fieldset_images']['hide_submit_images'][$key]['image'] = array(
         '#type' => 'markup',
         '#title' => $image_file->basename,
-        '#value' => theme('image',$image_file->filename),
+        '#value' => theme('image', $image_file->filename),
       );
-
-      /*$form['fieldset_images']['hide_submit_images'][$key]['text'] = array(
-        '#type' => 'textarea',
-        '#rows' => 2,
-        //'#title' => check_plain($language->native),
-        //'#default_value' => variable_get($msg_for_language, ""),
-      );*/
   }
   
   $form['list_of_images'] = array( 
@@ -205,12 +220,10 @@ function hide_submit_admin_settings(&$form_state) {
       '#value' => $list_of_images,
   );
   
-  
-  foreach( $user_images as $image_file) {
+  foreach ($user_images as $image_file) {
       $key = md5($image_file->basename);
-      $form['fieldset_images']['hide_submit_images'][$key]['operations'] = array('#value' => l(t('delete'), 'admin/settings/hide-submit/delete/'.$image_file->basename) );
+      $form['fieldset_images']['hide_submit_images'][$key]['operations'] = array('#value' => l(t('delete'), 'admin/settings/hide-submit/delete/'. $image_file->basename) );
   }
-  
 
   $form['fieldset_images']['hide_submit_random'] = array(
       '#type' => 'checkboxes',
@@ -241,9 +254,6 @@ function hide_submit_admin_settings(&$form_state) {
 
   // Upload picture
   $form['#attributes']['enctype'] = 'multipart/form-data';
-
-  //$picture = variable_get('hide_submit_custom_image_link', HIDE_SUBMIT_DEFAULT_IMAGE ); 
-
   $form['fieldset_images']['hide_submit_image_upload'] = array(
     '#type' => 'file', 
     '#title' => t('Upload picture'), 
@@ -268,8 +278,14 @@ function hide_submit_admin_settings(&$form_state) {
 }
   
 
-function hide_submit_admin_settings_validate($form, &$form_state)
-{
+/**
+ * Admin settings validation handler
+ *
+ * @param $form
+ * @param &$form_state
+ */
+function hide_submit_admin_settings_validate($form, &$form_state) {
+    
     $values = (object) $form_state['values'];
     
     if ($values->hide_submit_toggle_random) {
@@ -280,13 +296,19 @@ function hide_submit_admin_settings_validate($form, &$form_state)
             }
         }
         if ($selected_count < 2) {
-            form_set_error('hide_submit_toggle_random','Random feature requires at least two selected images '.$selected_count);
+            form_set_error('hide_submit_toggle_random', 'Random feature requires at least two selected images '. $selected_count);
         }
     }  
 }
 
-function hide_submit_admin_settings_submit($form, &$form_state)
-{
+/**
+ * Admin settings submit handler
+ *
+ * @param $form
+ * @param &$form_state
+ */
+function hide_submit_admin_settings_submit($form, &$form_state) {
+    
     $values = (object) $form_state['values'];
     $op = isset($values->op) ? $values->op : '';
 
@@ -295,7 +317,7 @@ function hide_submit_admin_settings_submit($form, &$form_state)
     }
     // Set custom link
     if ($values->hide_submit_toggle_custom_image) {
-        variable_set('hide_submit_image',$values->hide_submit_custom_image_link);
+        variable_set('hide_submit_image', $values->hide_submit_custom_image_link);
         drupal_set_message("Custom image is set..."); 
     }
     // Randomize
@@ -307,11 +329,11 @@ function hide_submit_admin_settings_submit($form, &$form_state)
                 $images_to_random[] = $values->list_of_images[$key];
             }
         }
-        variable_set('hide_submit_image',$images_to_random);    
+        variable_set('hide_submit_image', $images_to_random);    
     }
     // Use single default image
     else {
-        variable_set('hide_submit_image',$values->list_of_images[$values->hide_submit_default_image]);
+        variable_set('hide_submit_image', $values->list_of_images[$values->hide_submit_default_image]);
         drupal_set_message("Default image is set...");    
     }
 }
@@ -320,8 +342,13 @@ function hide_submit_admin_settings_submit($form, &$form_state)
 //                          THEME FUNCTIONS
 //------------------------------------------------------------------------
 
-function theme_hide_submit_images_fieldset($form)
-{
+/**
+ * Theme function for the admin settings image fieldset
+ *
+ * @param $form
+ */
+function theme_hide_submit_images_fieldset($form) {
+    
   $images = $form['hide_submit_images'];
   foreach (element_children($images) as $key) {
 
@@ -329,23 +356,17 @@ function theme_hide_submit_images_fieldset($form)
     unset($form[$key]['image']['#title']);                 
     
     $row = array();
-    $row[] = array( 'data' => drupal_render($form['hide_submit_images'][$key]['image']).'<br />'.$filename, 'class' => 'hide-submit-image');
+    $row[] = array( 'data' => drupal_render($form['hide_submit_images'][$key]['image']) .'<br />'. $filename, 'class' => 'hide-submit-image');
     $row[] = array( 'data' => drupal_render($form['hide_submit_random'][$key]), 'class' => 'hide-submit-random');
     $row[] = array( 'data' => drupal_render($form['hide_submit_default_image'][$key]), 'class' => 'hide-submit-radio');
-    //$row[] = array( 'data' => drupal_render($form['hide_submit_images'][$key]['text']), 'class' => 'hide-submit-text');
     $row[] = array( 'data' => drupal_render($form['hide_submit_images'][$key]['operations']), 'class' => 'hide-submit-operations');
     
     $rows[] = $row;
   }
 
-  $header = array( 
-    t('Image'), 
-    t('Random'), 
-    t('Default'), 
-    t('Operations')
-  );
+  $header = array( t('Image'), t('Random'), t('Default'), t('Operations')  );
   
-  $output  = drupal_render($form).theme('table', $header, $rows);
+  $output  = drupal_render($form) . theme('table', $header, $rows);
   
   return $output;
 }
