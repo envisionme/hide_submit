@@ -223,10 +223,14 @@ function _hide_submit_get_message( ) {
 function _hide_submit_get_javascript() {
     
     $message = filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message() ) );
-    $image = check_plain( _hide_submit_get_image() ); 
     
-  $javascript = <<<JAVASCRIPT_CODE
-jQuery("<img>").attr("src",'/$image');
+    // Set base path for local image, none for external
+    $image = _hide_submit_get_image(); 
+    $image = (url($image) == $image) ? $image : (base_path() . $image);
+    $image = check_url($image);
+   
+$javascript = <<<JAVASCRIPT_CODE
+jQuery("<img>").attr("src",'$image');
 $(document).ready(function() {
   $('input:submit').click(function() {
       $(this).siblings('input:submit').hide();            
@@ -238,4 +242,3 @@ JAVASCRIPT_CODE;
 
   return $javascript;
 }
-
