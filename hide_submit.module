@@ -30,7 +30,7 @@ define('HIDE_SUBMIT_IMG_DIRECTORY', file_directory_path() .'/hide_submit');
 define('HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME', 'loader.gif');
 define('HIDE_SUBMIT_DEFAULT_IMAGE', HIDE_SUBMIT_MODULE_DIRECTORY .'/images/'. HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME);
 
-
+define('HIDE_SUBMIT_EXCLUDE_CLASS', 'hide-submit-exclude');
                                                                                                                                                                                                                 
 /**
  * Implementation of hook_help().
@@ -104,11 +104,49 @@ function hide_submit_init() {
 }
 
 /**
+ * Implementation of hook_form_alter
+ * 
+ * Used to add "hide-submit-exclude" class to some forms
+ * Avoid conflicts and refine hiding
+*/
+
+function hide_submit_form_alter(&$form, $form_state, $form_id) {
+
+   $exclude_forms = explode("\r\n", variable_get('hide_submit_exclusion', 'shoutbox_add_form'));
+  
+   foreach ($exclude_forms as $exclude_form_id) {
+      if ($form_id == $exclude_form_id) {
+          _hide_submit_add_exclude_class($form);
+      } 
+   }
+}
+
+function _hide_submit_add_exclude_class(&$elements) {
+   // Recurse through all children.
+   foreach (element_children($elements) as $key) {
+      if (isset($elements[$key]) && $elements[$key]) {
+        _hide_submit_add_exclude_class($elements[$key]);
+      }
+   }
+   
+   // Add class to submit buttons
+   if (isset($elements['#type']) && $elements['#type'] == 'submit') {
+          
+      if (isset($elements['#attributes']['class'])) {
+          $elements['#attributes']['class'] .=  " ". HIDE_SUBMIT_EXCLUDE_CLASS;
+      }
+      else {
+          $elements['#attributes']['class'] = HIDE_SUBMIT_EXCLUDE_CLASS;
+      }
+   }
+}
+
+
+/**
  * Check if JS should be loaded for current page
 */                   
 function _hide_submit_load_js_check_condition() {
 
-    
     $js_load_option = variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD);
 
     switch ($js_load_option) {
@@ -152,7 +190,6 @@ function _hide_submit_load_js_check_condition() {
     $theme = array(
         'hide_submit_images_fieldset' => array(
             'arguments' => array('form' => NULL),
-            //'file' => 'gametracker_pages_games.inc',
         ),
     );
     return $theme;
@@ -228,15 +265,17 @@ function _hide_submit_get_javascript() {
     $image = _hide_submit_get_image(); 
     $image = (url($image) == $image) ? $image : (base_path() . $image);
     $image = check_url($image);
+    
+    $exclude = HIDE_SUBMIT_EXCLUDE_CLASS;
    
 $javascript = <<<JAVASCRIPT_CODE
 jQuery("<img>").attr("src",'$image');
 $(document).ready(function() {
-  $('input:submit').click(function() {
+    $('input:submit:not(.$exclude)').click(function() {
       $(this).siblings('input:submit').hide();            
-      $(this).hide();      
+      $(this).hide();
       $('$message').insertAfter(this);
-  })  
+    })  
 })
 JAVASCRIPT_CODE;
 
