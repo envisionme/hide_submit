@@ -135,10 +135,10 @@ function hide_submit_admin_settings(&$form_state) {
       '#title' => t('Javascript load options'),
       '#default_value' => variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD),
       '#options' => array(
-            0 => t('Add/Edit node pages only'), 
-            1 => t('Every page'), 
-            2 => t('Only on the listed pages.'),
-            3 => t('Every page except the listed pages.') ),
+            HIDE_SUBMIT_IN_CONTENT_ADD_EDIT => t('Add/Edit node pages only'), 
+                   HIDE_SUBMIT_IN_ALL_PAGES => t('Every page'), 
+                HIDE_SUBMIT_IN_LISTED_PAGES => t('Only on the listed pages.'),
+           HIDE_SUBMIT_EXCLUDE_LISTED_PAGES => t('Every page except the listed pages.') ),
       '#description' => t("Add/Edit node view will load for pages with url '/node/add' and '/node/*/edit'.  Every page, is well, EVERY PAGE.  For the last two options use the page list box to set a list of include/exclude urls."),
   );
   
@@ -185,6 +185,23 @@ function hide_submit_admin_settings(&$form_state) {
       );
     }
   }
+  
+  // --- Compatibility ---
+  
+  $form['fieldset_compatibility'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Compatibility'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    //'#description' => t("Compatibility settings.."),
+  );
+    
+  $form['fieldset_compatibility']['hide_submit_exclusion'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Exclusion list'),
+      '#default_value' => variable_get('hide_submit_exclusion', 'shoutbox_add_form'),
+      '#description' => t("Here you can make a list of forms (form-id) you wish not to hide submit buttons . <br />For example you can exclude the login block submit button from hiding by typing <em>user_login_block</em>"),
+  );  
 
   // --- IMAGE SELECTION FIELDSET ---
   
@@ -268,8 +285,7 @@ function hide_submit_admin_settings(&$form_state) {
       '#tree' => FALSE,
       '#description' => t('Check here if you want use random image each time the script loads. You need to check the <em>random</em> box for at least two images')
     );
-
- 
+    
   $form = system_settings_form($form); 
   $form['#validate'][] = 'hide_submit_admin_settings_validate'; // add validation  
   $form['#submit'][] = 'hide_submit_admin_settings_submit';     // add submit handler 
