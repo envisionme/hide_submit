@@ -186,23 +186,6 @@ function hide_submit_admin_settings(&$form_state) {
     }
   }
   
-  // --- Compatibility ---
-  
-  $form['fieldset_compatibility'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Compatibility'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    //'#description' => t("Compatibility settings.."),
-  );
-    
-  $form['fieldset_compatibility']['hide_submit_exclusion'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Exclusion list'),
-      '#default_value' => variable_get('hide_submit_exclusion', 'shoutbox_add_form'),
-      '#description' => t("Here you can make a list of forms (form-id) you wish not to hide submit buttons . <br />For example you can exclude the login block submit button from hiding by typing <em>user_login_block</em>"),
-  );  
-
   // --- IMAGE SELECTION FIELDSET ---
   
   $form['fieldset_images'] = array(
@@ -285,6 +268,30 @@ function hide_submit_admin_settings(&$form_state) {
       '#tree' => FALSE,
       '#description' => t('Check here if you want use random image each time the script loads. You need to check the <em>random</em> box for at least two images')
     );
+
+  // --- Advanced ---
+  
+  $form['fieldset_advanced'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Advanced'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    //'#description' => t("Compatibility settings.."),
+  );
+    
+  $form['fieldset_advanced']['hide_submit_form_exclusion'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Form-id exclusion list'),
+      '#default_value' => variable_get('hide_submit_form_exclusion', 'shoutbox_add_form'),
+      '#description' => t("Here you can make a list of forms (form-id) you wish not to hide submit buttons . <br />For example you can exclude the login block submit button from hiding by typing <em>user_login_block</em>"),
+  );  
+
+  $form['fieldset_advanced']['hide_submit_attribute_filter'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Attribute Filter (Experimental)'),
+      '#default_value' => variable_get('hide_submit_attribute_filter', ''),
+      '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />For example to filter the 'Save as draft' button type [value!=Save As Draft] ", array('%selectors' => l('Attribute Filters:','http://docs.jquery.com/Selectors'))),
+  );  
     
   $form = system_settings_form($form); 
   $form['#validate'][] = 'hide_submit_admin_settings_validate'; // add validation  

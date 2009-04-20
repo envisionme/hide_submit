@@ -112,7 +112,7 @@ function hide_submit_init() {
 
 function hide_submit_form_alter(&$form, $form_state, $form_id) {
 
-   $exclude_forms = explode("\r\n", variable_get('hide_submit_exclusion', 'shoutbox_add_form'));
+   $exclude_forms = explode("\r\n", variable_get('hide_submit_form_exclusion', 'shoutbox_add_form'));
   
    foreach ($exclude_forms as $exclude_form_id) {
       if ($form_id == $exclude_form_id) {
@@ -267,11 +267,14 @@ function _hide_submit_get_javascript() {
     $image = check_url($image);
     
     $exclude = HIDE_SUBMIT_EXCLUDE_CLASS;
+    $attr_filters = filter_xss_admin(variable_get('hide_submit_attribute_filter', ''));
+    $attr_filters = implode("",explode("\r\n",$attr_filters));
+
    
 $javascript = <<<JAVASCRIPT_CODE
 jQuery("<img>").attr("src",'$image');
 $(document).ready(function() {
-    $('input:submit:not(.$exclude)').click(function() {
+    $('input:submit:not(.$exclude)$attr_filters').click(function() {
       $(this).siblings('input:submit').hide();            
       $(this).hide();
       $('$message').insertAfter(this);
