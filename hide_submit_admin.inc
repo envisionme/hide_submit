@@ -126,8 +126,18 @@ function hide_submit_admin_settings(&$form_state) {
 
   $form['fieldset_js_settings'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Load options'),
+      '#title' => t('Script settings'),
       '#collapsible' => TRUE,
+  );
+  
+  $form['fieldset_js_settings']['hide_submit_script_mode'] = array(
+      '#type' => 'radios',
+      '#title' => t('Script mode'),
+      '#default_value' => variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE),
+      '#options' => array(
+            HIDE_SUBMIT_MODE_HIDE      => t('Hide buttons and display message'), 
+            HIDE_SUBMIT_MODE_DISABLE   => t('Disable buttons'), ),
+      '#description' => t("What the script shall do? hide the buttons or disable them"),
   );
 
   $form['fieldset_js_settings']['hide_submit_js_load_option'] = array(
@@ -292,6 +302,14 @@ function hide_submit_admin_settings(&$form_state) {
       '#default_value' => variable_get('hide_submit_attribute_filter', ''),
       '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />For example to filter the 'Save as draft' button type [value!=Save As Draft] ", array('%selectors' => l('Attribute Filters:','http://docs.jquery.com/Selectors'))),
   );  
+    
+  $form['fieldset_advanced']["hide_submit_debug"] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable debugging'),
+      '#default_value' => variable_get('hide_submit_debug', FALSE ),
+      '#tree' => FALSE,
+      '#description' => t('Debugging turned on will paint included and excluded submit buttons')
+    );
     
   $form = system_settings_form($form); 
   $form['#validate'][] = 'hide_submit_admin_settings_validate'; // add validation  

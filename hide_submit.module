@@ -15,10 +15,13 @@
 
 // --- Constants ---
 
-define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT', 0);
-define('HIDE_SUBMIT_IN_ALL_PAGES',        1);
-define('HIDE_SUBMIT_IN_LISTED_PAGES',     2);
+define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT',  0);
+define('HIDE_SUBMIT_IN_ALL_PAGES',         1);
+define('HIDE_SUBMIT_IN_LISTED_PAGES',      2);
 define('HIDE_SUBMIT_EXCLUDE_LISTED_PAGES', 3);
+
+define('HIDE_SUBMIT_MODE_HIDE',    0);
+define('HIDE_SUBMIT_MODE_DISABLE', 1);
 
 define('HIDE_SUBMIT_DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
 define('HIDE_SUBMIT_DEFAULT_MESSAGE', t("Please wait...") );
@@ -121,6 +124,25 @@ function hide_submit_form_alter(&$form, $form_state, $form_id) {
    }
 }
 
+/**
+ * Implementation of hook_theme()
+ */
+ function hide_submit_theme() {
+    $theme = array(
+        'hide_submit_images_fieldset' => array(
+            'arguments' => array('form' => NULL),
+        ),
+    );
+    return $theme;
+}
+
+//------------------------------------------------------------------------
+//                        Private functions 
+//------------------------------------------------------------------------
+
+/**
+* A recursive function to add class to all excluded submit buttons
+*/
 function _hide_submit_add_exclude_class(&$elements) {
    // Recurse through all children.
    foreach (element_children($elements) as $key) {
@@ -131,13 +153,7 @@ function _hide_submit_add_exclude_class(&$elements) {
    
    // Add class to submit buttons
    if (isset($elements['#type']) && $elements['#type'] == 'submit') {
-          
-      if (isset($elements['#attributes']['class'])) {
-          $elements['#attributes']['class'] .=  " ". HIDE_SUBMIT_EXCLUDE_CLASS;
-      }
-      else {
-          $elements['#attributes']['class'] = HIDE_SUBMIT_EXCLUDE_CLASS;
-      }
+      $elements['#attributes']['class'] = empty($elements['#attributes']['class']) ? HIDE_SUBMIT_EXCLUDE_CLASS  : $elements['#attributes']['class'] .' '. HIDE_SUBMIT_EXCLUDE_CLASS;
    }
 }
 
@@ -182,20 +198,6 @@ function _hide_submit_load_js_check_condition() {
     
     return ($page_match == 1);
 }
-
-/**
- * Implementation of hook_theme()
- */
- function hide_submit_theme() {
-    $theme = array(
-        'hide_submit_images_fieldset' => array(
-            'arguments' => array('form' => NULL),
-        ),
-    );
-    return $theme;
-}
-
-
 
 /**
  * scrub the format strings for things that make bad javascript.
@@ -266,18 +268,26 @@ function _hide_submit_get_javascript() {
     $image = (url($image) == $image) ? $image : (base_path() . $image);
     $image = check_url($image);
     
-    $exclude = HIDE_SUBMIT_EXCLUDE_CLASS;
-    $attr_filters = filter_xss_admin(variable_get('hide_submit_attribute_filter', ''));
-    $attr_filters = implode("",explode("\r\n",$attr_filters));
-
-   
+    // Assemble jQuery selector 
+    $selector = 'input:submit:not(.'. HIDE_SUBMIT_EXCLUDE_CLASS .')';
+    $selector .= implode("",explode("\r\n",filter_xss_admin(variable_get('hide_submit_attribute_filter', ''))));
+    
+    // For debugging, this addtion to the script will paint included and excluded buttons
+    $debug_code = (variable_get('hide_submit_debug', FALSE)) 
+        ? "$('input:submit').css({border:'6px red solid'}); $('$selector').css({border:'6px green solid'});" 
+        : ""; //background:'yellow', 
+    
+    // Operation, hide or disable
+    $operation = (variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_HIDE) 
+        ? "$(this).siblings('input:submit').hide(); $(this).hide(); $('$message').insertAfter(this); "
+        : "$(this).siblings('input:submit').attr('disabled', true); $(this).attr('disabled', true);";
+    
 $javascript = <<<JAVASCRIPT_CODE
 jQuery("<img>").attr("src",'$image');
 $(document).ready(function() {
-    $('input:submit:not(.$exclude)$attr_filters').click(function() {
-      $(this).siblings('input:submit').hide();            
-      $(this).hide();
-      $('$message').insertAfter(this);
+$debug_code
+    $('$selector').click(function() {
+      $operation
     })  
 })
 JAVASCRIPT_CODE;
