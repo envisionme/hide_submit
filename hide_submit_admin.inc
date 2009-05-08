@@ -288,6 +288,16 @@ function hide_submit_admin_settings(&$form_state) {
     '#collapsed' => TRUE,
     //'#description' => t("Compatibility settings.."),
   );
+  
+  $form['fieldset_advanced']['hide_submit_form_exclusion_mode'] = array(
+      '#type' => 'radios',
+      '#title' => t('Exclusion mode'),
+      '#default_value' => variable_get('hide_submit_form_exclusion_mode', HIDE_SUBMIT_EXCLUDE_LISTED_FORMS),
+      '#options' => array(
+            HIDE_SUBMIT_EXCLUDE_LISTED_FORMS   => t('Exclude listed forms'), 
+            HIDE_SUBMIT_EXCLUDE_UNLISTED_FORMS => t('Exclude unlisted forms'), ),
+      '#description' => t("Choose exclusion mode for listed forms. <br /> NOTE: Forms that are not part of drupal Form-API will not be affected by this configuration"),
+  );
     
   $form['fieldset_advanced']['hide_submit_form_exclusion'] = array(
       '#type' => 'textarea',

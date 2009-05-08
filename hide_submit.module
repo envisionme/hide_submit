@@ -34,6 +34,8 @@ define('HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME', 'loader.gif');
 define('HIDE_SUBMIT_DEFAULT_IMAGE', HIDE_SUBMIT_MODULE_DIRECTORY .'/images/'. HIDE_SUBMIT_DEFAULT_IMAGE_BASENAME);
 
 define('HIDE_SUBMIT_EXCLUDE_CLASS', 'hide-submit-exclude');
+define('HIDE_SUBMIT_EXCLUDE_LISTED_FORMS',   0);
+define('HIDE_SUBMIT_EXCLUDE_UNLISTED_FORMS', 1);
                                                                                                                                                                                                                 
 /**
  * Implementation of hook_help().
@@ -117,10 +119,21 @@ function hide_submit_form_alter(&$form, $form_state, $form_id) {
 
    $exclude_forms = explode("\r\n", variable_get('hide_submit_form_exclusion', 'shoutbox_add_form'));
   
+   $found = FALSE;
+   $mode = variable_get('hide_submit_form_exclusion_mode', HIDE_SUBMIT_EXCLUDE_LISTED_FORMS);
    foreach ($exclude_forms as $exclude_form_id) {
       if ($form_id == $exclude_form_id) {
-          _hide_submit_add_exclude_class($form);
+          $found = TRUE;
+          if ($mode == HIDE_SUBMIT_EXCLUDE_LISTED_FORMS) {
+              drupal_set_message("Excluding ". $exclude_form_id);
+              _hide_submit_add_exclude_class($form);
+          }
       } 
+   }
+   
+   if (!$found && $mode == HIDE_SUBMIT_EXCLUDE_UNLISTED_FORMS) {
+       drupal_set_message("Excluding ". $form_id);
+        _hide_submit_add_exclude_class($form);
    }
 }
 
