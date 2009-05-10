@@ -1,5 +1,14 @@
 // $Id$
 
+-- 2009-03-02 version 6.x-1.8
+
+*  New: Admin settings to disable submit buttons instead of hiding them
+*  New: Admin settings to exclude buttons of certain forms or certain attributes
+        This feature solves some compatibility issues #433958, #423874, #432988
+
+*  Change: hook_uninstall, use variable_del instead of direct db access
+*  Change: Code cosmetics and comments, code review session
+
 -- 2009-03-02 version 6.x-1.7
 
 * Fixed: #387470: Error in hook_install
