@@ -11,8 +11,6 @@
  * So the user will know its request is being processed
  */
 
- define('HIDE_SUBMIT_DEFAULT_MESSAGE', t("Please wait...") );
-
 // --- Constants ---
 
 define('HIDE_SUBMIT_IN_CONTENT_ADD_EDIT',  0);
@@ -283,7 +281,7 @@ function _hide_submit_get_javascript() {
     
     // Assemble jQuery selector 
     $selector = 'input:submit:not(.'. HIDE_SUBMIT_EXCLUDE_CLASS .')';
-    $selector .= implode("",explode("\r\n",filter_xss_admin(variable_get('hide_submit_attribute_filter', ''))));
+    $selector .= implode("", explode("\r\n", filter_xss_admin(variable_get('hide_submit_attribute_filter', ''))));
     
     // For debugging, this addtion to the script will paint included and excluded buttons
     $debug_code = (variable_get('hide_submit_debug', FALSE)) 
