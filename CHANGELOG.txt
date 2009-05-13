@@ -1,6 +1,12 @@
 // $Id$
 
--- 2009-03-02 version 6.x-1.8
+-- 2009-05-13 version 6.x-1.9
+
+* Fixed: #459118: Message keep appear
+* Added: Debug button highlighting and messages are now visible only to users with administrator permissions
+* Update: Hebrew translation updated
+
+-- 2009-05-10 version 6.x-1.8
 
 *  New: Admin settings to disable submit buttons instead of hiding them
 *  New: Admin settings to exclude buttons of certain forms or certain attributes
