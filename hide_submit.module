@@ -314,7 +314,10 @@ JAVASCRIPT_CODE;
   return $javascript;
 }
 
+/**
+* Debug mode check
+*/
+
 function _hide_submit_debug_on() {
-    $debug_on = variable_get('hide_submit_debug', FALSE) && user_access('administer site configuration');
-    return  $debug_on;
+    return variable_get('hide_submit_debug', FALSE) && user_access('administer site configuration');
 }
