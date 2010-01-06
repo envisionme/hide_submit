@@ -21,6 +21,9 @@ define('HIDE_SUBMIT_EXCLUDE_LISTED_PAGES', 3);
 define('HIDE_SUBMIT_MODE_HIDE',    0);
 define('HIDE_SUBMIT_MODE_DISABLE', 1);
 
+define('HIDE_SUBMIT_BUTTON_ONLY',    0);
+define('HIDE_SUBMIT_BUTTON_AND_KEY', 1);
+
 define('HIDE_SUBMIT_DEFAULT_JS_LOAD', HIDE_SUBMIT_IN_CONTENT_ADD_EDIT);
 define('HIDE_SUBMIT_DEFAULT_MESSAGE', t("Please wait...") );
 
@@ -100,9 +103,9 @@ function hide_submit_init() {
     static $hide_submit_js_already_loaded = FALSE;
 
     if (!$hide_submit_js_already_loaded && _hide_submit_load_js_check_condition()) {
-        $js = _hide_submit_get_javascript();
-        drupal_add_js($js, 'inline', 'footer');
-        $hide_submit_js_loaded = TRUE;  
+        drupal_add_js(_hide_submit_get_javascript_settings(), 'setting');
+        drupal_add_js(drupal_get_path('module','hide_submit').'/hide_submit.js');
+        $hide_submit_js_already_loaded = TRUE;  
     }
 }
 
@@ -128,7 +131,6 @@ function hide_submit_form_alter(&$form, $form_state, $form_id) {
               if (_hide_submit_debug_on()) {
                 drupal_set_message("hide_submit: Excluding form ". $exclude_form_id);
               }
-              
           }
       } 
    }
@@ -139,7 +141,17 @@ function hide_submit_form_alter(&$form, $form_state, $form_id) {
        if (_hide_submit_debug_on()) {
            drupal_set_message("hide_submit: Excluding form ". $form_id);
        }
-
+   }
+   
+   // Comment workaround
+   // When disable button mode is selected
+   // Comments won't submit because disabled button value is not included in the $_POST[] data
+   // This workaround should fix this
+   if ($form_id == 'comment_form' && variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_DISABLE) {
+      $form['hide_submit_comment_fix'] = array(
+         '#type' => 'hidden', 
+         '#value' => ""
+      ); 
    }
 }
 
@@ -278,9 +290,7 @@ function _hide_submit_get_message() {
 * Get javascript code for injection
 */
 
-function _hide_submit_get_javascript() {
-    
-    $message = filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message() ) );
+function _hide_submit_get_javascript_settings() {
     
     // Set base path for local image, none for external
     $image = _hide_submit_get_image(); 
@@ -291,27 +301,25 @@ function _hide_submit_get_javascript() {
     $selector = 'input:submit:not(.'. HIDE_SUBMIT_EXCLUDE_CLASS .')';
     $selector .= implode("", explode("\r\n", filter_xss_admin(variable_get('hide_submit_attribute_filter', ''))));
     
-    // For debugging, this addtion to the script will paint included and excluded buttons
-    $debug_code = _hide_submit_debug_on() 
-        ? "$('input:submit').css({border:'6px red solid'}); $('$selector').css({border:'6px green solid'});" 
-        : ""; //background:'yellow', 
-    
-    // Operation, hide or disable
-    $operation = (variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_HIDE) 
-        ? "$(this).siblings('input:submit').hide(); $(this).hide(); $('$message').insertAfter(this); "
-        : "$(this).siblings('input:submit').attr('disabled', true); $(this).attr('disabled', true);";
-    
-$javascript = <<<JAVASCRIPT_CODE
-jQuery("<img>").attr("src",'$image');
-$(document).ready(function() {
-$debug_code
-    $('$selector').click(function() {
-      $operation
-    })  
-})
-JAVASCRIPT_CODE;
 
-  return $javascript;
+   $mode = (variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_HIDE) ? "hide" : "disable";
+
+    $settings = array(
+      'hide_submit' => array(
+         'selector' => $selector,
+             'mode' => $mode,
+         'keypress' => variable_get('hide_submit_keypress', HIDE_SUBMIT_BUTTON_AND_KEY),
+              'dbg' => _hide_submit_debug_on(),
+      ));
+
+   
+   // Add Message and image only when needed
+   if ($mode == 'hide') {
+       $settings['hide_submit']['message'] = filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message() ) );
+       $settings['hide_submit']['image']   = $image;
+   }
+
+  return $settings;
 }
 
 /**

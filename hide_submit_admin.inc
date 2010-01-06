@@ -109,18 +109,21 @@ function hide_submit_admin_settings(&$form_state) {
   $form = array();
    
   // --- PREVIEW ---
+  if (variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_HIDE) {
 
-  $form['fieldset_preview'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Preview of current animation and message settings'),
-    '#collapsible' => FALSE,
-  );
+      $form['fieldset_preview'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Preview of current animation and message settings'),
+        '#collapsible' => FALSE,
+      );
+      
+      $form['fieldset_preview']['preview'] = array(
+        '#type' => 'markup',
+        '#id' => 'hide-submit-preview-user',
+        '#value' => filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message( ) ) ),
+      );
+  } 
 
-  $form['fieldset_preview']['preview'] = array(
-    '#type' => 'markup',
-    '#id' => 'hide-submit-preview-user',
-    '#value' => filter_xss_admin( _hide_submit_clean_for_javascript( _hide_submit_get_message( ) ) ),
-  );
 
   // --- LOAD OPTIONS FIELDSET ---
 
@@ -140,9 +143,21 @@ function hide_submit_admin_settings(&$form_state) {
       '#description' => t("What the script shall do? hide the buttons or disable them"),
   );
 
+  $form['fieldset_js_settings']['hide_submit_keypress'] = array(
+      '#type' => 'radios',
+      '#title' => t('Trigger options'),
+      '#default_value' => variable_get('hide_submit_keypress', HIDE_SUBMIT_BUTTON_AND_KEY),
+      '#options' => array(
+                HIDE_SUBMIT_BUTTON_ONLY    => t('Trigger when button is clicked'), 
+                HIDE_SUBMIT_BUTTON_AND_KEY => t('Trigger when button is clicked or when ENTER key pressed'), 
+            ),
+      '#description' => t("Control the script triggering handlers"),
+  );
+  
+  
   $form['fieldset_js_settings']['hide_submit_js_load_option'] = array(
       '#type' => 'radios',
-      '#title' => t('Javascript load options'),
+      '#title' => t('Load options'),
       '#default_value' => variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD),
       '#options' => array(
             HIDE_SUBMIT_IN_CONTENT_ADD_EDIT => t('Add/Edit node pages only'), 
