@@ -9,6 +9,7 @@ function hide_submit_button(obj, message) {
 
 // Disable button and siblings
 function disable_submit_button(obj) {
+    $(obj).parents("form").submit()
     $(obj).siblings('input:submit').attr("disabled", "disabled");
     $(obj).attr("disabled", "disabled");
 
@@ -53,7 +54,6 @@ $(document).ready(function() {
         // Submit when ENTER is pressed
         if (settings.keypress) {
             $(settings.selector).keypress(function() {
-                $(this).parents("form").submit()
                 disable_submit_button(this);
             });
         }
