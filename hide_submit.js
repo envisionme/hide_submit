@@ -9,14 +9,14 @@ function hide_submit_button(obj, message) {
 
 // Disable button and siblings
 function disable_submit_button(obj) {
-    $(obj).parents("form").submit()
     $(obj).siblings('input:submit').attr("disabled", "disabled");
     $(obj).attr("disabled", "disabled");
 
-    // Workaround for form-comment 
-    // inject missing "op"
-    $("#edit-hide-submit-comment-fix").attr("name", "op");
-    $("#edit-hide-submit-comment-fix").attr("value", $(obj).attr("value"));            
+    // Workaround for comment-form and node-form
+    // inject missing "op" for preview or delete etc.
+    $("#edit-hide-submit-fake-op").attr("name", "op");
+    $("#edit-hide-submit-fake-op").attr("value", $(obj).attr("value"));            
+    $(obj).parents("form").submit()
 }
 
 $(document).ready(function() {
