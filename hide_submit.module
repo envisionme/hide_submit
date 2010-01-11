@@ -147,7 +147,7 @@ function hide_submit_form_alter(&$form, $form_state, $form_id) {
    // When disable button mode is selected
    // Comments won't submit because disabled button value is not included in the $_POST[] data
    // This workaround should fix this
-   if ( ($form_id == 'comment_form' || strpos($form_id, 'node_form') !== FALSE)
+   if ( ($form_id == 'comment_form' || preg_match('/node_form$/', $form_id))
 	   && variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE) == HIDE_SUBMIT_MODE_DISABLE ) {
       $form['hide_submit_fake_op'] = array(
          '#type' => 'hidden', 
