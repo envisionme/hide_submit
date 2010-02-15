@@ -71,7 +71,7 @@ function hide_submit_admin_delete_image_submit($form, &$form_state) {
                }
            }
        }
-       else if ($image == $filepath) {
+       elseif ($image == $filepath) {
            variable_set('hide_submit_image', HIDE_SUBMIT_DEFAULT_IMAGE);
        }
        
@@ -386,7 +386,7 @@ function hide_submit_admin_settings_submit($form, &$form_state) {
         drupal_set_message("Custom image is set..."); 
     }
     // Randomize
-    else if ($values->hide_submit_toggle_random) {
+    elseif ($values->hide_submit_toggle_random) {
         drupal_set_message("Random image feature is set..."); 
         $images_to_random = array();
         foreach ($values->hide_submit_random as $key => $v) {
