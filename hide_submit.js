@@ -32,7 +32,9 @@ $(document).ready(function() {
     // Hide buttons and inject message
     if (settings.mode == 'hide') {
 
-        jQuery("<img>").attr("src",settings.image);
+        if (settings.image) {
+            jQuery("<img>").attr("src",settings.image);
+        }
         
         $(settings.selector).click(function() {
             hide_submit_button(this, settings.message);

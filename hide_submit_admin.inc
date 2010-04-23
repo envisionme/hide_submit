@@ -263,6 +263,14 @@ function hide_submit_admin_settings(&$form_state) {
       '#options' => $options,
   );
   
+  $form['fieldset_images']["hide_submit_text_only"] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display text only'),
+      '#default_value' => variable_get('hide_submit_text_only', FALSE ),
+      '#tree' => FALSE,
+      '#description' => t('Check here if you want show text only (no image).')
+    );
+
   $form['fieldset_images']["hide_submit_toggle_custom_image"] = array(
       '#type' => 'checkbox',
       '#title' => t('Use custom link'),
@@ -270,7 +278,7 @@ function hide_submit_admin_settings(&$form_state) {
       '#tree' => FALSE,
       '#description' => t('Check here if you want use a custom image link.')
     );
-
+    
   $form['fieldset_images']['hide_submit_custom_image_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Custom image or animation'),
