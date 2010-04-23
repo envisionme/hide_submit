@@ -139,7 +139,7 @@ function hide_submit_admin_settings(&$form_state) {
       '#default_value' => variable_get('hide_submit_script_mode', HIDE_SUBMIT_MODE_HIDE),
       '#options' => array(
             HIDE_SUBMIT_MODE_HIDE      => t('Hide buttons and display message'), 
-            HIDE_SUBMIT_MODE_DISABLE   => t('Disable buttons'), ),
+            HIDE_SUBMIT_MODE_DISABLE   => t('Disable buttons (Experimental)'), ),
       '#description' => t("What the script shall do? hide the buttons or disable them"),
   );
 
@@ -160,10 +160,10 @@ function hide_submit_admin_settings(&$form_state) {
       '#title' => t('Load options'),
       '#default_value' => variable_get('hide_submit_js_load_option', HIDE_SUBMIT_DEFAULT_JS_LOAD),
       '#options' => array(
+           HIDE_SUBMIT_EXCLUDE_LISTED_PAGES => t('Every page except the listed pages.'),
             HIDE_SUBMIT_IN_CONTENT_ADD_EDIT => t('Add/Edit node pages only'), 
-                   HIDE_SUBMIT_IN_ALL_PAGES => t('Every page'), 
                 HIDE_SUBMIT_IN_LISTED_PAGES => t('Only on the listed pages.'),
-           HIDE_SUBMIT_EXCLUDE_LISTED_PAGES => t('Every page except the listed pages.') ),
+          ),
       '#description' => t("Add/Edit node view will load for pages with url '/node/add' and '/node/*/edit'.  Every page, is well, EVERY PAGE.  For the last two options use the page list box to set a list of include/exclude urls."),
   );
   
@@ -221,8 +221,9 @@ function hide_submit_admin_settings(&$form_state) {
     //'#description' => t("The message to print after submit is clicked and the button become invisible. i.e. Please wait.."),
   );
 
-  // jpg, jpeg, gif, png
+  // jpg, jpeg, gif, png (file_scan_directory using ereg)
   $mask = "^.+\.(([jJ][pP][gG)|([jJ][pP][eE][gG])|([gG][iI][fF])|([pP][nN][gG]))$";
+  
   $default_images = file_scan_directory(HIDE_SUBMIT_MODULE_DIRECTORY .'/images', $mask);
   $user_images = file_scan_directory(HIDE_SUBMIT_IMG_DIRECTORY, $mask);
 
@@ -302,6 +303,13 @@ function hide_submit_admin_settings(&$form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
+  
+  $form['fieldset_advanced']['hide_submit_fix_known_conflicts'] = array(
+    '#type' => 'checkbox', 
+    '#title' => t('Automatically fix known conflicts'), 
+    '#default_value' => variable_get('hide_submit_fix_known_conflicts', TRUE),
+    '#description' => t('There are some known conflicts between the hide submit script and other scripts using AJAX, check this box to try and prevent some of the known conflicts. Useful if you are using shoutbox module or insert module'),
+  );  
   
   $form['fieldset_advanced']['hide_submit_form_exclusion_mode'] = array(
       '#type' => 'radios',
