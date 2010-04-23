@@ -332,7 +332,7 @@ function hide_submit_admin_settings(&$form_state) {
   $form['fieldset_advanced']['hide_submit_form_exclusion'] = array(
       '#type' => 'textarea',
       '#title' => t('Form-id exclusion list'),
-      '#default_value' => variable_get('hide_submit_form_exclusion', 'shoutbox_add_form'),
+      '#default_value' => variable_get('hide_submit_form_exclusion', ''),
       '#description' => t("Here you can make a list of forms (form-id) you wish not to hide submit buttons . <br />For example you can exclude the login block submit button from hiding by typing <em>user_login_block</em>"),
   );  
 
@@ -340,7 +340,7 @@ function hide_submit_admin_settings(&$form_state) {
       '#type' => 'textarea',
       '#title' => t('Attribute Filter (Experimental)'),
       '#default_value' => variable_get('hide_submit_attribute_filter', ''),
-      '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />For example to filter the 'Save as draft' button type [value!=Save As Draft] ", array('%selectors' => l('Attribute Filters:', 'http://docs.jquery.com/Selectors'))),
+      '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />For example to filter the 'Save as draft' button type [value!=Save As Draft]", array('%selectors' => l( t('Attribute Filters:'), 'http://docs.jquery.com/Selectors'))),
   );  
     
   $form['fieldset_advanced']["hide_submit_debug"] = array(
@@ -399,7 +399,7 @@ function hide_submit_admin_settings_submit($form, &$form_state) {
     // Set custom link
     if ($values->hide_submit_toggle_custom_image) {
         variable_set('hide_submit_image', $values->hide_submit_custom_image_link);
-        drupal_set_message("Custom image is set..."); 
+        drupal_set_message( t("Custom image is set...") ); 
     }
     // Randomize
     elseif ($values->hide_submit_toggle_random) {
@@ -415,7 +415,7 @@ function hide_submit_admin_settings_submit($form, &$form_state) {
     // Use single default image
     else {
         variable_set('hide_submit_image', $values->list_of_images[$values->hide_submit_default_image]);
-        drupal_set_message("Default image is set...");    
+        drupal_set_message( t("Default image is set...") );
     }
 }
 

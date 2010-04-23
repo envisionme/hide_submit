@@ -50,7 +50,7 @@ function hide_submit_update_6101()  {
         // Option #1 load on every page was omitted 
         // Option #3 load on every page and exclude listed renumbered as #1
         case 3:
-            variable_set('hide_submit_js_load_option',HIDE_SUBMIT_EXCLUDE_LISTED_PAGES);
+            variable_set('hide_submit_js_load_option', HIDE_SUBMIT_EXCLUDE_LISTED_PAGES);
             break;
         case 1:
             if (variable_get('hide_submit_js_load_pages', '') != "") {
