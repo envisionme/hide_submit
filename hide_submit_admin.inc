@@ -340,9 +340,11 @@ function hide_submit_admin_settings(&$form_state) {
       '#type' => 'textarea',
       '#title' => t('Attribute Filter (Experimental)'),
       '#default_value' => variable_get('hide_submit_attribute_filter', ''),
-      '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />For example to filter the 'Save as draft' button type [value!=Save As Draft]", array('%selectors' => l( t('Attribute Filters:'), 'http://docs.jquery.com/Selectors'))),
-  );  
-    
+      '#description' => t("Here you can make a list of attribute filters see %selectors for formatting details<br />"
+                         ."For example to filter the 'Save as draft' button type input[value!=Save As Draft]<br />"
+                         ."* Note there is a known bug when running jquery on firefox resulting with error \"z.indexOf is not a function\""
+                         ." to prevent this bug use \"input[value^=whatever]\" instead of just \"[value^=whatever]\" ", array('%selectors' => l( t('Attribute Filters:'), 'http://docs.jquery.com/Selectors'))),
+  );      
   $form['fieldset_advanced']["hide_submit_debug"] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable debugging'),
