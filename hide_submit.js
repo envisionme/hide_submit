@@ -1,4 +1,3 @@
-// $Id$
 
 // Hide button and siblings
 function hide_submit_button(obj, message) {
