@@ -1,4 +1,4 @@
-// $id$
+// $Id$
 Drupal.behaviors.hide_submit_admin_settings = function(context) {
     function hs_custom_image_toggle(use_custom_link) {
         $img = $("#edit-hide-submit-custom-image-link-wrapper", context);

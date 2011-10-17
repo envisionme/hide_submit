@@ -1,4 +1,4 @@
-// $id$
+// $Id$
 
 Drupal.behaviors.hide_submit = function(context) {
   // Hide button and siblings
