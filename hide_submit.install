@@ -18,7 +18,7 @@ function hide_submit_install() {
    // sense for modules that play with theme, like themekey or
    // section, so they can initialize the current theme before
    // hide_submit.
-   update_sql("UPDATE {system} SET weight = 10 WHERE type = 'module' AND name = 'hide_submit'
+   update_sql("UPDATE {system} SET weight = 10 WHERE type = 'module' AND name = 'hide_submit'");
    drupal_set_message( st('Hide submit module installed.') );
 }
 
