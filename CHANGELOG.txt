@@ -1,5 +1,9 @@
 -- 2011-10-17 version 6.x-1.11
 
+* #1030622 Added using Drupal.behaviors (VladSavitsky)
+* #1112114 Allow modules and theme to define their own image (B-Prod)
+* #634202 When installed with Administraiton Theme (Joe Weitzel)
+* #1030580 fixed typo in variable name (VladSavitsky)
 
 -- 2010-12-24 version 6.x-1.10
 
