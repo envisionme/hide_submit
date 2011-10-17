@@ -1,3 +1,17 @@
+-- 2011-10-17 version 6.x-1.11
+
+
+-- 2010-12-24 version 6.x-1.10
+
+* New: Prevent conflict with draft module
+* New: Prevent conflict with shoutbox module
+* New: #484244: Show image when enter is pressed.
+* Changed: JS code was moved into .js file
+* Changed: #766514: Drop "Every page" Javascript load option
+* Fixed: #651806: Hide Submit JavaScript causes validation warning when using XHTML 1.0 Strict
+* Fixed: Forms not altered (form_alter) if script was not loaded
+* Experimental: Disable button feature is experimental - has issues
+* Other: Code review session using coder module
 
 -- 2009-05-13 version 6.x-1.9
 

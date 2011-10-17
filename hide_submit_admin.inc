@@ -1,4 +1,5 @@
 <?php
+// $id$
 
 /**
  * @file
@@ -378,7 +379,7 @@ function hide_submit_admin_settings_validate($form, &$form_state) {
             }
         }
         if ($selected_count < 2) {
-            form_set_error('hide_submit_toggle_random', 'Random feature requires at least two selected images '. $selected_count);
+            form_set_error('hide_submit_toggle_random', 'Random feature requires at least two selected images ('. $selected_count .' selected)');
         }
     }  
 }

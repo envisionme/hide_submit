@@ -1,4 +1,5 @@
 <?php
+// $id$
 
 /**
  * @file
@@ -12,7 +13,13 @@
 * Implement hook install
 */
 function hide_submit_install() {
-    drupal_set_message( st('Hide submit module installed.') );
+   // This change allow most modules to have their init() hook
+   // implementation called before hide_submit's one. This take
+   // sense for modules that play with theme, like themekey or
+   // section, so they can initialize the current theme before
+   // hide_submit.
+   update_sql("UPDATE {system} SET weight = 10 WHERE type = 'module' AND name = 'hide_submit'
+   drupal_set_message( st('Hide submit module installed.') );
 }
 
 /**
@@ -60,4 +67,10 @@ function hide_submit_update_6101()  {
             break;
     }
     return array();
+}
+
+function hide_submit_update_6102() {
+    $ret = array();
+    $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE type = 'module' AND name = 'hide_submit'");
+    return $ret;
 }
